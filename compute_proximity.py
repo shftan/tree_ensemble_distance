@@ -17,7 +17,7 @@ def proximityCGB(
     use_prediction_scores=True,
     use_variances=True):
     # This will work for up to a few tens of thousands of samples,
-    # after that it will blow up and we will ahve to have more memory efficient
+    # after that it will blow up and we will have to have more memory efficient
     # (but slower) approaches.
     N = len(X)
     proximity = np.zeros((N, N), dtype=np.float32)
@@ -38,7 +38,7 @@ def proximityCGB(
         terminal_leaves = tree.apply(X)
         # Get which samples share the same terminal leaf.
         # This computation, the way it is done, requires to store an
-        #  NxN matrix even if the output is sparse. Can be done manually for
+        # NxN matrix even if the output is sparse. Can be done manually for
         # less memory but more compute.
         proximity_mask = (terminal_leaves[:, None] ==
                             terminal_leaves[None, :]).astype(np.float32)
