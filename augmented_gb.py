@@ -1,4 +1,13 @@
 #!/usr/bin/python3
+
+# This file extends sklearn's BinomialDeviance and GradientBoostingClassifier
+# classes to keep track of the scaling gammas in gradient boosting trees.
+# Additionally, the default GradientBoostingClassifier uses independent gammas
+# per leaf. The AugmentedGradientBoostingClassifier also allows one to have 
+# scaling gammas at the tree level, or to not use scaling gammas at all,
+# two common variations of gradient boosted trees not directly supported
+# by sklearn
+
 from sklearn.ensemble import _gb_losses
 from sklearn.ensemble import _gb
 

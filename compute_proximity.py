@@ -85,10 +85,13 @@ def proximityCGB(
 
 # Parse input
 parser = argparse.ArgumentParser(description='Build random forest proximity for a digits data set.')
-parser.add_argument('--gamma_type', type=str, choices=['disabled', 'per_tree', 'per_leaf'], required=True,
-					help='Compute gamma per leaf, per tree, or do not compute gamma at all')
-parser.add_argument('--use_prediction_scores_in_PM', action='store_true',
-					help='Use prediction scores instead of indicator functions when computing the proximity matrix')
+parser.add_argument(
+    '--gamma_type', 
+    type=str, 
+    choices=['disabled', 'per_tree', 'per_leaf'],
+    default="per_tree",
+    help='Compute gamma per leaf, per tree, or do not compute gamma at all'
+)
 args = parser.parse_args()
 args.gamma_type = augmented_gb.GammaType[args.gamma_type]
 
@@ -107,21 +110,25 @@ indexes_test = np.sort(indexes_test)
 # We can set up if the gammas operate at the tree level or at the leaf level
 # (or if they are not used at all)
 model = augmented_gb.AugmentedGradientBoostingClassifier(
-	n_estimators=100,
-	learning_rate=0.01,
+	n_estimators=50,
+	learning_rate=0.1,
 	max_depth=3,
 	random_state=0,
 	gamma_type=args.gamma_type
 )
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
-print(f"ROC: {100 * roc_auc_score(y_test, y_pred):.2f}")
+print(f"Model ROC AUC score: {100 * roc_auc_score(y_test, y_pred):.2f}")
 
 # Compute and print the proximity matrix
 prox = proximityCGB(
 	model=model,
 	X=X,
 	train_indexes=indexes_train,
-	use_prediction_scores=args.use_prediction_scores_in_PM)
+    use_gammas=True,
+    use_gammas_squared=False,
+    use_prediction_scores=False,
+    use_variances=True
+)
+print("Proximity matrix:")
 print(np.round(prox, 3))
-print(np.equal(y, y[:, None]).astype(np.int32))
